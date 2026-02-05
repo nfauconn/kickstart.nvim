@@ -470,7 +470,7 @@ require('lazy').setup({
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim', opts = {}, event = 'LspAttach' },
 
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
@@ -796,7 +796,12 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  {
+    'folke/todo-comments.nvim',
+    event = { 'BufReadPost', 'BufNewFile' },
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+  },
 
   { -- Undo tree visualizer
     'mbbill/undotree',
@@ -911,5 +916,6 @@ function ColorTB(color)
 end
 
 vim.cmd.colorscheme 'mellow'
+-- ColorTB('mellow')
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
