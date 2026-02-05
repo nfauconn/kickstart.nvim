@@ -288,17 +288,6 @@ require('lazy').setup({
   -- NOTE: Plugins can be added via a link or github org/name. To run setup automatically, use `opts = {}`
   { 'NMAC427/guess-indent.nvim', opts = {} },
 
-  -- Alternatively, use `config = function() ... end` for full control over the configuration.
-  -- If you prefer to call `setup` explicitly, use:
-  --    {
-  --        'lewis6991/gitsigns.nvim',
-  --        config = function()
-  --            require('gitsigns').setup({
-  --                -- Your gitsigns configuration here
-  --            })
-  --        end,
-  --    }
-  --
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`.
   --
@@ -807,22 +796,11 @@ require('lazy').setup({
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
     --
+    "mellow-theme/mellow.nvim",
+    lazy = false,
+    priority = 1000,
+    
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
-
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
-    end,
   },
 
   -- Highlight todo, notes, etc in comments
@@ -875,10 +853,10 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     config = function()
-      local filetypes = { 'bash', 'dockerfile', 'go', 'lua', 'sql', 'vim', 'vimdoc', 'yaml' }
+      local filetypes = { 'bash', 'dockerfile', 'go', 'diff', 'lua', 'sql', 'vim', 'vimdoc', 'yaml' }
       require('nvim-treesitter.configs').setup {
         ensure_installed = filetypes,
-        auto_install = false,
+        auto_install = true,
         highlight = { enable = true },
         indent = { enable = true },
       }
@@ -940,5 +918,6 @@ function ColorTB(color)
   vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
 end
 
+vim.cmd.colorscheme 'mellow'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
