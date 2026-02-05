@@ -85,6 +85,7 @@ return {
     window = {
       position = 'float',
       width = 40,
+      border = 'rounded',
       mapping_options = {
         noremap = true,
         nowait = true,
@@ -216,6 +217,7 @@ return {
     git_status = {
       window = {
         position = 'float',
+        border = 'rounded',
         mappings = {
           ['A'] = 'git_add_all',
           ['gu'] = 'git_unstage_file',
