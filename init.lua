@@ -249,39 +249,7 @@ require('lazy').setup({
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
 
-      -- This runs on LSP attach per buffer (see main LSP attach function in 'neovim/nvim-lspconfig' config for more info,
-      -- it is better explained there). This allows easily switching between pickers if you prefer using something else!
-      vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('telescope-lsp-attach', { clear = true }),
-        callback = function(event)
-          local buf = event.buf
-
-          -- Find references for the word under your cursor.
-          vim.keymap.set('n', 'gr', builtin.lsp_references, { buffer = buf, desc = '[G]oto [R]eferences' })
-
-          -- Jump to the implementation of the word under your cursor.
-          -- Useful when your language has ways of declaring types without an actual implementation.
-          vim.keymap.set('n', 'gi', builtin.lsp_implementations, { buffer = buf, desc = '[G]oto [I]mplementation' })
-
-          -- Jump to the definition of the word under your cursor.
-          -- This is where a variable was first declared, or where a function is defined, etc.
-          -- To jump back, press <C-t>.
-          vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
-
-          -- Fuzzy find all the symbols in your current document.
-          -- Symbols are things like variables, functions, types, etc.
-          vim.keymap.set('n', 'gO', builtin.lsp_document_symbols, { buffer = buf, desc = 'Open Document Symbols' })
-
-          -- Fuzzy find all the symbols in your current workspace.
-          -- Similar to document symbols, except searches over your entire project.
-          vim.keymap.set('n', 'gW', builtin.lsp_dynamic_workspace_symbols, { buffer = buf, desc = 'Open Workspace Symbols' })
-
-          -- Jump to the type of the word under your cursor.
-          -- Useful when you're not sure what type a variable is and you want to see
-          -- the definition of its *type*, not where it was *defined*.
-          vim.keymap.set('n', 'gtd', builtin.lsp_type_definitions, { buffer = buf, desc = '[G]oto [T]ype [D]efinition' })
-        end,
-      })
+      -- LSP keymaps live in the main LspAttach config below to avoid Telescope load-order issues.
     end,
   },
 
@@ -344,6 +312,25 @@ require('lazy').setup({
             mode = mode or 'n'
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
+
+          local telescope_or = function(telescope_fn, fallback_fn)
+            return function()
+              local ok, builtin = pcall(require, 'telescope.builtin')
+              if ok and builtin[telescope_fn] then
+                builtin[telescope_fn]()
+              else
+                fallback_fn()
+              end
+            end
+          end
+
+          -- Goto/lookup mappings should exist even if Telescope hasn't been loaded yet.
+          map('gd', telescope_or('lsp_definitions', vim.lsp.buf.definition), '[G]oto [D]efinition')
+          map('gr', telescope_or('lsp_references', vim.lsp.buf.references), '[G]oto [R]eferences')
+          map('gi', telescope_or('lsp_implementations', vim.lsp.buf.implementation), '[G]oto [I]mplementation')
+          map('gtd', telescope_or('lsp_type_definitions', vim.lsp.buf.type_definition), '[G]oto [T]ype [D]efinition')
+          map('gO', telescope_or('lsp_document_symbols', vim.lsp.buf.document_symbol), 'Open Document Symbols')
+          map('gW', telescope_or('lsp_dynamic_workspace_symbols', vim.lsp.buf.workspace_symbol), 'Open Workspace Symbols')
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
