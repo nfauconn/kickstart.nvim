@@ -86,6 +86,11 @@ return {
       position = 'float',
       width = 40,
       border = 'rounded',
+      popup = {
+        position = '50%',
+        size = { width = '50%', height = '80%' },
+        border = 'rounded',
+      },
       mapping_options = {
         noremap = true,
         nowait = true,
@@ -167,7 +172,7 @@ return {
           --".null-ls_*",
         },
       },
-      follow_current_file = false, -- This will find and focus the file in the active buffer every
+      follow_current_file = true, -- This will find and focus the file in the active buffer every
       -- time the current file is changed while the tree is open.
       group_empty_dirs = false, -- when true, empty folders will be grouped together
       hijack_netrw_behavior = 'open_default', -- netrw disabled, opening a directory opens neo-tree
