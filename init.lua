@@ -400,7 +400,6 @@ require('lazy').setup({
         bashls = {},
         dockerls = {},
         lua_ls = {},
-        sqls = {},
         yamlls = {},
       }
 
@@ -416,7 +415,6 @@ require('lazy').setup({
         'bash-language-server',
         'dockerfile-language-server',
         'lua-language-server', -- Lua Language server
-        'sqls',
         'stylua', -- Used to format Lua code
         'yaml-language-server',
         -- You can add other tools here that you want Mason to install
