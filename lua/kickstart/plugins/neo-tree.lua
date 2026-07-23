@@ -1,238 +1,119 @@
-return {
-  'nvim-neo-tree/neo-tree.nvim',
-  branch = 'v3.x',
-  lazy = true,
-  dependencies = {
-    'nvim-lua/plenary.nvim',
-    'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
-    'MunifTanjim/nui.nvim',
-    -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
-  },
-  keys = {
-    { '<leader>e', '<cmd>Neotree toggle<CR>', desc = 'Toggle Neo-tree' },
-  },
-  opts = {
-    close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
-    popup_border_style = 'rounded',
-    enable_git_status = true,
-    enable_diagnostics = true,
-    open_files_do_not_replace_types = { 'terminal', 'trouble', 'qf' }, -- when opening files, do not use windows containing these filetypes or buftypes
-    sort_case_insensitive = true, -- used when sorting files and directories in the tree
-    sort_function = nil, -- use a custom function for sorting files and directories in the tree
-    -- sort_function = function (a,b)
-    --       if a.type == b.type then
-    --           return a.path > b.path
-    --       else
-    --           return a.type > b.type
-    --       end
-    --   end , -- this sorts files and directories descendantly
-    default_component_configs = {
-      container = {
-        enable_character_fade = true,
-      },
-      indent = {
-        indent_size = 2,
-        padding = 0, -- extra padding on left hand side
-        -- indent guides
-        with_markers = true,
-        indent_marker = '│',
-        last_indent_marker = '└',
-        highlight = 'NeoTreeIndentMarker',
-        -- expander config, needed for nesting files
-        with_expanders = nil, -- if nil and file nesting is enabled, will enable expanders
-        expander_collapsed = '',
-        expander_expanded = '',
-        expander_highlight = 'NeoTreeExpander',
-      },
-      icon = {
-        folder_closed = '',
-        folder_open = '',
-        folder_empty = '',
-        -- The next two settings are only a fallback, if you use nvim-web-devicons and configure default icons there
-        -- then these will never be used.
-        default = '*',
-        highlight = 'NeoTreeFileIcon',
-      },
-      modified = {
-        symbol = '[+]',
-        highlight = 'NeoTreeModified',
-      },
-      name = {
-        trailing_slash = false,
-        use_git_status_colors = true,
-        highlight = 'NeoTreeFileName',
-      },
-      git_status = {
-        symbols = {
-          -- Change type
-          added = '', -- or "✚", but this is redundant info if you use git_status_colors on the name
-          modified = '', -- or "", but this is redundant info if you use git_status_colors on the name
-          deleted = '✖', -- this can only be used in the git_status source
-          renamed = '', -- this can only be used in the git_status source
-          -- Status type
-          untracked = '',
-          ignored = '',
-          unstaged = '',
-          staged = '',
-          conflict = '',
-        },
-      },
-    },
-    -- A list of functions, each representing a global custom command
-    -- that will be available in all sources (if not overridden in `opts[source_name].commands`)
-    -- see `:h neo-tree-global-custom-commands`
-    commands = {},
-    window = {
-      position = 'float',
-      width = 40,
-      border = 'rounded',
-      popup = {
-        position = '50%',
-        size = { width = '50%', height = '80%' },
-        border = 'rounded',
-      },
-      mapping_options = {
-        noremap = true,
-        nowait = true,
-      },
-      mappings = {
-        ['<space>'] = {
-          'toggle_node',
-          nowait = false, -- disable `nowait` if you have existing combos starting with this char that you want to use
-        },
-        ['<2-LeftMouse>'] = 'open',
-        ['<cr>'] = 'open',
-        ['<esc>'] = 'revert_preview',
-        ['P'] = { 'toggle_preview', config = { use_float = true } },
-        ['l'] = 'focus_preview',
-        ['s'] = 'open_split',
-        ['v'] = 'open_vsplit',
-        ['<C-s>'] = 'split_with_window_picker',
-        ['<C-v>'] = 'vsplit_with_window_picker',
-        ['t'] = 'open_tabnew',
-        -- ["<cr>"] = "open_drop",
-        -- ["t"] = "open_tab_drop",
-        ['w'] = 'open_with_window_picker',
-        --["P"] = "toggle_preview", -- enter preview mode, which shows the current node without focusing
-        ['C'] = 'close_node',
-        -- ['C'] = 'close_all_subnodes',
-        ['z'] = 'close_all_nodes',
-        ['Z'] = 'expand_all_nodes',
-        ['a'] = {
-          'add',
-          -- this command supports BASH style brace expansion ("x{a,b,c}" -> xa,xb,xc). see `:h neo-tree-file-actions` for details
-          -- some commands may take optional config options, see `:h neo-tree-mappings` for details
-          config = {
-            show_path = 'absolute', -- "none", "relative", "absolute"
-          },
-        },
-        ['A'] = 'add_directory', -- also accepts the optional config.show_path option like "add". this also supports BASH style brace expansion.
-        ['d'] = 'delete',
-        ['r'] = 'rename',
-        ['y'] = 'copy_to_clipboard',
-        ['x'] = 'cut_to_clipboard',
-        ['p'] = 'paste_from_clipboard',
-        ['c'] = 'copy', -- takes text input for destination, also accepts the optional config.show_path option like "add":
-        -- ["c"] = {
-        --  "copy",
-        --  config = {
-        --    show_path = "none" -- "none", "relative", "absolute"
-        --  }
-        --}
-        ['m'] = 'move', -- takes text input for destination, also accepts the optional config.show_path option like "add".
-        ['q'] = 'close_window',
-        ['R'] = 'refresh',
-        ['?'] = 'show_help',
-        ['<'] = 'prev_source',
-        ['>'] = 'next_source',
-      },
-    },
-    nesting_rules = {},
-    filesystem = {
-      filtered_items = {
-        visible = true, -- when true, they will just be displayed differently than normal items
-        hide_dotfiles = false,
-        hide_gitignored = true,
-        hide_hidden = true, -- only works on Windows for hidden files/directories
-        hide_by_name = {
-          --"node_modules"
-        },
-        hide_by_pattern = { -- uses glob style patterns
-          --"*.meta",
-          --"*/src/*/tsconfig.json",
-        },
-        always_show = { -- remains visible even if other settings would normally hide it
-          --".gitignored",
-        },
-        never_show = { -- remains hidden even if visible is toggled to true, this overrides always_show
-          --".DS_Store",
-          --"thumbs.db"
-        },
-        never_show_by_pattern = { -- uses glob style patterns
-          --".null-ls_*",
-        },
-      },
-      follow_current_file = true, -- This will find and focus the file in the active buffer every
-      -- time the current file is changed while the tree is open.
-      group_empty_dirs = false, -- when true, empty folders will be grouped together
-      hijack_netrw_behavior = 'open_default', -- netrw disabled, opening a directory opens neo-tree
-      -- in whatever position is specified in window.position
-      -- "open_current",  -- netrw disabled, opening a directory opens within the
-      -- window like netrw would, regardless of window.position
-      -- "disabled",    -- netrw left alone, neo-tree does not handle opening dirs
-      use_libuv_file_watcher = true, -- This will use the OS level file watchers to detect changes
-      -- instead of relying on nvim autocmd events.
-      window = {
-        mappings = {
-          ['<bs>'] = 'navigate_up',
-          ['.'] = 'set_root',
-          ['H'] = 'toggle_hidden',
-          ['/'] = 'fuzzy_finder',
-          ['D'] = 'fuzzy_finder_directory',
-          ['#'] = 'fuzzy_sorter', -- fuzzy sorting using the fzy algorithm
-          -- ["D"] = "fuzzy_sorter_directory",
-          ['f'] = 'filter_on_submit',
-          ['<c-x>'] = 'clear_filter',
-          ['[g'] = 'prev_git_modified',
-          [']g'] = 'next_git_modified',
-        },
-        fuzzy_finder_mappings = { -- define keymaps for filter popup window in fuzzy_finder_mode
-          ['<down>'] = 'move_cursor_down',
-          ['<C-j>'] = 'move_cursor_down',
-          ['<up>'] = 'move_cursor_up',
-          ['<C-k>'] = 'move_cursor_up',
-        },
-      },
+vim.pack.add {
+  { src = 'https://github.com/nvim-neo-tree/neo-tree.nvim', version = 'main' },
+  'https://github.com/nvim-lua/plenary.nvim',
+  'https://github.com/MunifTanjim/nui.nvim',
+}
 
-      commands = {}, -- Add a custom command or override a global one using the same function name
+vim.keymap.set('n', '<leader>e', '<cmd>Neotree toggle<CR>', { desc = 'Toggle Neo-tree' })
+
+require('neo-tree').setup {
+  -- Default is "NC" (a special style meant to blend with 'winborder'). We want
+  -- a visibly rounded border on every popup instead.
+  popup_border_style = 'rounded',
+
+  -- Default is false (case-sensitive sort). Sort file/folder names ignoring case.
+  sort_case_insensitive = true,
+
+  -- Default is { "terminal", "Trouble", "qf", "edgy" }.
+  -- CAVEAT: "trouble" here is lowercase, but trouble.nvim's actual filetype is
+  -- "Trouble" (capital T) -- so this entry silently matches nothing unless you
+  -- fix the case. Harmless if you don't use trouble.nvim/edgy.nvim.
+  open_files_do_not_replace_types = { 'terminal', 'trouble', 'qf' },
+
+  default_component_configs = {
+    icon = {
+      -- Default folder icons are different glyphs from these.
+      folder_closed = '',
+      folder_open = '',
+      folder_empty = '', -- default uses a distinct "empty folder" glyph; we reuse the closed-folder icon instead
     },
-    buffers = {
-      follow_current_file = true, -- This will find and focus the file in the active buffer every
-      -- time the current file is changed while the tree is open.
-      group_empty_dirs = true, -- when true, empty folders will be grouped together
-      show_unloaded = true,
-      window = {
-        mappings = {
-          ['bd'] = 'buffer_delete',
-          ['<bs>'] = 'navigate_up',
-          ['.'] = 'set_root',
-        },
-      },
+    indent = {
+      -- Default padding is 1 (one extra space before the indent guide). We want it flush.
+      padding = 0,
+      -- Default expander glyphs (for collapsed/expanded nested files) are different from these.
+      expander_collapsed = '',
+      expander_expanded = '',
+    },
+    modified = {
+      -- Default is "[+] " (with a trailing space). We drop the trailing space.
+      symbol = '[+]',
     },
     git_status = {
-      window = {
-        position = 'float',
-        border = 'rounded',
-        mappings = {
-          ['A'] = 'git_add_all',
-          ['gu'] = 'git_unstage_file',
-          ['ga'] = 'git_add_file',
-          ['gr'] = 'git_revert_file',
-          ['gc'] = 'git_commit',
-          ['gp'] = 'git_push',
-          ['gg'] = 'git_commit_and_push',
-        },
+      -- All of these override neo-tree's default glyph set for git status symbols.
+      symbols = {
+        added = '',
+        modified = '',
+        deleted = '✖', -- happens to match the default already, kept for clarity
+        renamed = '',
+        untracked = '',
+        ignored = '',
+        unstaged = '',
+        staged = '',
+        conflict = '',
       },
+    },
+  },
+
+  window = {
+    -- Default is "left" (a sidebar). We float the tree instead.
+    position = 'float',
+    -- Not set by default (no border on the sidebar). Rounded border for the float.
+    border = 'rounded',
+    popup = {
+      -- Not set by default; matches the outer window border.
+      border = 'rounded',
+    },
+    mappings = {
+      -- Default "<esc>" closes the preview/floating window ("cancel").
+      -- We reuse it to revert an open preview instead.
+      ['<esc>'] = 'revert_preview',
+      -- Default has "s" = open_vsplit and no mapping on "v".
+      -- We swap them: "s" = split, "v" = vsplit (more mnemonic).
+      ['s'] = 'open_split',
+      ['v'] = 'open_vsplit',
+      -- Not mapped by default: expand every nested node at once.
+      ['Z'] = 'expand_all_nodes',
+      -- Default "a" (add file) prompts with show_path = "none" (just the bare name).
+      -- We show the absolute path in the prompt instead.
+      ['a'] = { 'add', config = { show_path = 'absolute' } },
+    },
+  },
+
+  filesystem = {
+    filtered_items = {
+      -- Default is false: filtered items are hidden entirely.
+      -- true = show them, just dimmed/marked differently.
+      visible = true,
+      -- Default is true (dotfiles hidden). We want dotfiles visible.
+      hide_dotfiles = false,
+    },
+    -- Default is false: use nvim autocmd-based change detection.
+    -- true = use the OS-level file watcher instead (libuv).
+    use_libuv_file_watcher = true,
+    -- Default is { enabled = false, ... }: the tree doesn't track the active buffer.
+    -- true = jump to and reveal whatever file is open in the current buffer.
+    follow_current_file = { enabled = true },
+    window = {
+      fuzzy_finder_mappings = {
+        -- Default fuzzy-finder navigation is <C-n>/<C-p> (emacs-style).
+        -- We add vim-style j/k navigation instead.
+        ['<C-j>'] = 'move_cursor_down',
+        ['<C-k>'] = 'move_cursor_up',
+      },
+    },
+  },
+
+  buffers = {
+    -- Default is false: buffers restored-but-unfocused from a session are hidden.
+    -- true = show them anyway.
+    show_unloaded = true,
+  },
+
+  git_status = {
+    window = {
+      -- Same float + rounded-border treatment as the main window above.
+      position = 'float',
+      border = 'rounded',
     },
   },
 }
