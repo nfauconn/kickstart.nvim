@@ -460,7 +460,7 @@ do
   -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
   -- - sd'   - [S]urround [D]elete [']quotes
   -- - sr)'  - [S]urround [R]eplace [)] [']
-  require('mini.surround').setup()
+  -- require('mini.surround').setup() -- disabled: mappe le prefixe `s` en normal mode
 
   -- Simple and easy statusline.
   --  You could remove this setup call if you don't like it,
@@ -936,8 +936,15 @@ do
   -- NOTE: You can also specify a branch or a specific commit
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
-  -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  -- Ensure parsers are installed. Matches the set the previous (lazy.nvim)
+  -- config had, so syntax highlighting stays as complete as before the migration.
+  -- Other languages still auto-install on demand via the FileType autocmd below.
+  local parsers = {
+    'bash', 'c', 'devicetree', 'diff', 'dockerfile', 'dot', 'git_config', 'git_rebase',
+    'gitcommit', 'gitignore', 'go', 'gomod', 'gosum', 'html', 'ini', 'json', 'lua',
+    'luadoc', 'markdown', 'markdown_inline', 'properties', 'python', 'query', 'sql',
+    'ssh_config', 'toml', 'tsx', 'typescript', 'vim', 'vimdoc', 'vue', 'yaml',
+  }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
