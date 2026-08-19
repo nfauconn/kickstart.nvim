@@ -80,6 +80,9 @@ require('neo-tree').setup {
   },
 
   filesystem = {
+    -- Default is "open_default": neo-tree hijacks netrw and auto-opens when you
+    -- start nvim on a directory (`nvim .`). "disabled" stops that auto-open.
+    hijack_netrw_behavior = 'disabled',
     filtered_items = {
       -- Default is false: filtered items are hidden entirely.
       -- true = show them, just dimmed/marked differently.

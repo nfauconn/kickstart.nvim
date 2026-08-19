@@ -423,7 +423,7 @@ do
     vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
     vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
   end
-  ColorTB()
+  ColorTB 'mellow'
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
@@ -723,7 +723,7 @@ do
   ---@type table<string, vim.lsp.Config>
   local servers = {
     -- clangd = {},
-    -- gopls = {},
+    gopls = {},
     -- pyright = {},
     -- rust_analyzer = {},
     --
@@ -732,8 +732,6 @@ do
     --
     -- But for many setups, the LSP (`ts_ls`) will work just fine
     -- ts_ls = {},
-
-    stylua = {}, -- Used to format Lua code
 
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
@@ -776,28 +774,32 @@ do
     gh 'mason-org/mason-lspconfig.nvim',
     gh 'WhoIsSethDaniel/mason-tool-installer.nvim',
   }
+  -- NOTE: mason-lspconfig is required by mason-tool-installer to translate
+  -- lspconfig server names (e.g. lua_ls) into mason package names
+  -- (lua-language-server). Removing it breaks the auto-installer.
 
-  -- Automatically install LSPs and related tools to stdpath for Neovim
+  -- Automatically install LSPs and related tools to stdpath for Neovim.
+  -- Keep mason.setup eager: it prepends mason's bin dir to PATH, which the
+  -- language servers below need in order to be found on first buffer.
   require('mason').setup {}
 
-  -- Ensure the servers and tools above are installed
-  --
-  -- To check the current status of installed tools and/or manually install
-  -- other tools, you can run
-  --    :Mason
-  --
-  -- You can press `g?` for help in this menu.
-  local ensure_installed = vim.tbl_keys(servers or {})
-  vim.list_extend(ensure_installed, {
-    -- You can add other tools here that you want Mason to install
-  })
-
-  require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-
+  -- Enable servers immediately so they attach to the first buffer opened.
   for name, server in pairs(servers) do
     vim.lsp.config(name, server)
     vim.lsp.enable(name)
   end
+
+  -- Defer the auto-installer off the startup path: it's a background
+  -- "ensure these tools exist" check with no reason to block the first draw.
+  -- Run :Mason to inspect/install manually (press g? for help).
+  vim.schedule(function()
+    local ensure_installed = vim.tbl_keys(servers or {})
+    vim.list_extend(ensure_installed, {
+      'stylua', -- Used to format Lua code
+      -- You can add other tools here that you want Mason to install
+    })
+    require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+  end)
 end
 
 -- ============================================================
@@ -812,6 +814,7 @@ do
     format_on_save = function(bufnr)
       -- You can specify filetypes to autoformat on save here:
       local enabled_filetypes = {
+        go = true,
         -- lua = true,
         -- python = true,
       }
