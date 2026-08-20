@@ -1,5 +1,5 @@
 vim.pack.add { { src = 'https://github.com/ThePrimeagen/harpoon', version = 'harpoon2' } }
-require('harpoon'):setup()
+require('harpoon'):setup { settings = { save_on_toggle = true, sync_on_ui_close = true } }
 
 vim.keymap.set('n', '<leader>a', function() require('harpoon'):list():add() end, { desc = 'Harpoon add file' })
 vim.keymap.set('n', '<C-e>', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end, { desc = 'Harpoon menu' })
