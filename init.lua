@@ -445,11 +445,6 @@ do
   }
 
   -- [[ Colorscheme ]]
-  -- You can easily change to a different colorscheme.
-  -- Change the name of the colorscheme plugin below, and then
-  -- change the command under that to load whatever the name of that colorscheme is.
-  --
-  -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
   -- vim.pack.add { gh 'folke/tokyonight.nvim' }
   -- ---@diagnostic disable-next-line: missing-fields
   -- require('tokyonight').setup {
@@ -457,6 +452,21 @@ do
   --     comments = { italic = false }, -- Disable italics in comments
   --   },
   -- }
+  vim.pack.add { { src = "https://github.com/catppuccin/nvim", name = "catppuccin" } }
+  require("catppuccin").setup({
+    flavour = "auto", -- latte, frappe, macchiato, mocha
+    background = { -- :h background
+        light = "latte",
+        dark = "mocha",
+    },
+    transparent_background = true, -- disables setting the background color.
+    float = {
+        transparent = true, -- enable transparent floating windows
+        solid = false, -- use solid styling for floating windows, see |winborder|
+    },
+})
+
+-- setup must be called before loading
   vim.pack.add { gh 'mellow-theme/mellow.nvim' }
 
   function ColorTB(color)
@@ -464,7 +474,9 @@ do
     vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
     vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
   end
-  ColorTB 'mellow'
+
+  -- ColorTB()
+  vim.cmd.colorscheme "catppuccin-nvim"
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
