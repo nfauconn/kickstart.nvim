@@ -273,7 +273,7 @@ vim.keymap.set('v', '<leader>rt', 'y<Esc>:%s/<C-r>"//g<left><left>')
 vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 vim.keymap.set('n', '<leader>o', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>t', ':tabnew<CR>')
+vim.keymap.set('n', '<leader>T', ':tabnew<CR>')
 vim.keymap.set('x', 'p', '"_dP')
 vim.keymap.set('n', '<C-Up>', ':resize -2<CR>')
 vim.keymap.set('n', '<C-Down>', ':resize +2<CR>')
@@ -930,6 +930,7 @@ do
       --
       -- See `:help blink-cmp-config-keymap` for defining your own keymap
       preset = 'default',
+      ['<CR>'] = { 'accept', 'fallback' },
 
       -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
       --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
